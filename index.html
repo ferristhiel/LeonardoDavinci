@@ -1,542 +1,617 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Leonardo — Renaissance Reimagined</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leonardo da Vinci - Das Universalgenie</title>
+    <style>
+        /* === RESET === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- immediate theme to avoid flash -->
-  <script>
-    (function(){
-      try {
-        const saved = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = saved || (prefersDark ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', theme);
-      } catch (e) {}
-    })();
-  </script>
+        html {
+            scroll-behavior: smooth;
+        }
 
-  <style>
-    /* ---------- Design tokens ---------- */
-    :root{
-      --bg: #fbfbfb;
-      --panel: rgba(255,255,255,0.6);
-      --text: #0b0b0b;
-      --muted: #6b6b6b;
-      --accent: #2b2b2b;
-      --neon: #00e6ff;
-      --glass: rgba(255,255,255,0.4);
-      --glass-strong: rgba(255,255,255,0.8);
-      --shadow: 0 10px 30px rgba(15,15,15,0.06);
-      --radius: 14px;
-      --maxw: 1200px;
-      --glass-border: rgba(0,0,0,0.06);
-      --card-grad: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(245,245,245,0.6));
-      --accent-2: #ffb86b;
-    }
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            transition: background 0.6s, color 0.6s;
+        }
 
-    [data-theme="dark"]{
-      --bg: #060709;
-      --panel: rgba(10,12,14,0.5);
-      --text: #eef2f6;
-      --muted: #9aa3ad;
-      --accent: #ffffff;
-      --neon: #6ff1ff;
-      --glass: rgba(255,255,255,0.03);
-      --glass-strong: rgba(255,255,255,0.02);
-      --shadow: 0 18px 40px rgba(0,0,0,0.6);
-      --card-grad: linear-gradient(135deg, rgba(10,12,14,0.75), rgba(20,22,24,0.6));
-      --glass-border: rgba(255,255,255,0.03);
-      --accent-2: #ffb86b;
-    }
+        body.dark {
+            background: #121212;
+            color: #f0f0f0;
+        }
 
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: radial-gradient(1200px 600px at 10% 10%, rgba(0,200,255,0.03), transparent),
-                  radial-gradient(1000px 500px at 90% 90%, rgba(255,140,100,0.02), transparent),
-                  var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      line-height:1.5;
-      padding-bottom:60px;
-    }
+        /* === HEADER === */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
 
-    /* ---------- layout ---------- */
-    .wrap{max-width:var(--maxw);margin:0 auto;padding:20px;position:relative}
-    .nav{
-      position:fixed;left:20px;right:20px;top:18px;display:flex;align-items:center;
-      justify-content:space-between;gap:12px;padding:10px 16px;border-radius:12px;
-      background:var(--panel);backdrop-filter: blur(8px) saturate(120%);
-      box-shadow:var(--shadow);border:1px solid var(--glass-border);z-index:200;
-    }
-    .brand{font-weight:700;letter-spacing:-0.01em}
-    .nav .links{display:flex;gap:14px;align-items:center}
-    .nav a{color:var(--muted);text-decoration:none;font-size:0.95rem;padding:8px 10px;border-radius:8px;transition:all .22s}
-    .nav a:hover{color:var(--text);transform:translateY(-3px)}
-    .btn{
-      display:inline-flex;align-items:center;gap:10px;padding:8px 14px;border-radius:999px;border:none;cursor:pointer;
-      background:linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      color:var(--text);font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,0.06);
-    }
+        body.dark .header {
+            background: rgba(20, 20, 20, 0.95);
+        }
 
-    /* neon premium button */
-    .neon{
-      padding:10px 18px;background:linear-gradient(90deg, rgba(0,0,0,0.35), rgba(255,255,255,0.02));
-      border:1px solid rgba(255,255,255,0.05);position:relative;overflow:visible;
-    }
-    .neon::after{
-      content:'';position:absolute;inset:-3px;border-radius:999px;filter:blur(8px);
-      background:linear-gradient(90deg,var(--neon),var(--accent-2));opacity:0.18;mix-blend-mode:screen;
-      transform:scale(.98);
-    }
-    .neon:hover::after{opacity:0.35;transform:scale(1.02)}
-    .neon .dot{width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 12px var(--neon);}
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
 
-    /* ---------- hero ---------- */
-    header.hero{
-      margin-top:96px;
-      display:grid;grid-template-columns:1fr 460px;gap:28px;align-items:center;
-      padding:48px 20px;border-radius:18px;background:var(--card-grad);border:1px solid var(--glass-border);
-      box-shadow:var(--shadow);overflow:hidden;
-    }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #e74c3c;
+            text-decoration: none;
+        }
 
-    /* parallax decorative layers */
-    .hero .layer{
-      position:absolute;pointer-events:none;opacity:0.06;mix-blend-mode:screen;
-    }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
 
-    .hero-left{padding:20px 10px}
-    .title{
-      font-size:clamp(32px,6vw,62px);font-weight:200;line-height:0.95;margin-bottom:8px;
-      letter-spacing:-0.02em;transform-origin:left center;
-      opacity:0;animation:appearLeft .9s .2s forwards;
-    }
-    .subtitle{color:var(--muted);font-size:1rem;margin-bottom:18px;opacity:0;animation:appearLeft .9s .4s forwards}
-    .lede{color:var(--muted);max-width:70%;opacity:0;animation:appearLeft .9s .6s forwards}
+        .nav-item {
+            cursor: pointer;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
 
-    .hero-right{
-      position:relative;height:420px;border-radius:14px;overflow:hidden;background:linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.0));
-      display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -80px 120px rgba(0,0,0,0.06);
-      transform:translateZ(0);
-    }
-    .portrait{
-      width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.9,.3,1),filter .6s;
-      filter:grayscale(.25) contrast(1.02);
-    }
-    .portrait:hover{transform:scale(1.03) rotate(-0.6deg);filter:grayscale(.02) contrast(1.08)}
+        .nav-item:hover, .nav-item.active {
+            background: #e74c3c;
+            transform: translateY(-2px);
+        }
 
-    /* small badge row */
-    .badges{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
-    .badge{background:var(--glass);padding:8px 12px;border-radius:999px;border:1px solid var(--glass-border);font-size:.9rem;color:var(--muted)}
+        /* === DARKMODE BUTTON === */
+        .dark-toggle {
+            cursor: pointer;
+            font-size: 1.3rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
 
-    /* ---------- sections ---------- */
-    section.content{margin-top:44px;padding:44px 18px;border-radius:12px;background:var(--panel);border:1px solid var(--glass-border);backdrop-filter: blur(6px)}
-    .section-title{font-size:28px;font-weight:300;margin-bottom:18px;color:var(--text)}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+        .dark-toggle:hover {
+            background: #c0392b;
+        }
 
-    .card{
-      padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      border:1px solid var(--glass-border);box-shadow:0 12px 30px rgba(0,0,0,0.04);transition:transform .28s,box-shadow .28s;
-      transform:translateY(8px);opacity:0;
-    }
-    .card.visible{opacity:1;transform:none}
-    .card h3{margin-bottom:8px;color:var(--accent)}
-    .card p{color:var(--muted);font-size:.95rem}
+        /* === MAIN === */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem 0;
+        }
 
-    /* timeline variant */
-    .timeline{display:flex;flex-direction:column;gap:18px;margin-top:8px}
-    .time-row{display:flex;gap:20px;align-items:flex-start}
-    .time-row .year{min-width:80px;color:var(--muted);font-weight:600;font-style:italic}
-    .time-row .desc{background:var(--glass-strong);padding:12px;border-radius:10px;border:1px solid var(--glass-border);flex:1}
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
 
-    /* ---------- settings modal (slide down) ---------- */
-    .overlay{
-      position:fixed;inset:0;background:rgba(2,6,10,0.45);backdrop-filter: blur(6px);display:none;place-items:center;z-index:400;
-    }
-    .overlay.active{display:grid}
-    .panel{
-      width:min(420px,92%);background:var(--panel);border-radius:14px;padding:18px;border:1px solid var(--glass-border);
-      transform:translateY(-18px) scale(.98);opacity:0;
-      transition:transform .34s cubic-bezier(.2,.9,.3,1),opacity .34s;
-      box-shadow:var(--shadow)
-    }
-    .overlay.active .panel{transform:none;opacity:1}
-    .panel h4{margin-bottom:12px}
-    .radio-row{display:flex;gap:8px}
-    .option{
-      flex:1;padding:10px;border-radius:10px;border:1px solid var(--glass-border);text-align:center;cursor:pointer;
-      color:var(--muted)
-    }
-    .option.active{background:linear-gradient(90deg, rgba(0,0,0,0.04), rgba(255,255,255,0.02));color:var(--text);font-weight:600;border-color:var(--neon)}
+        .section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            margin-bottom: 3rem;
+        }
 
-    /* language chips */
-    .lang-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--glass-border);cursor:pointer;color:var(--muted)}
-    .chip.active{border-color:var(--neon);box-shadow:0 6px 20px rgba(0,230,255,0.06);color:var(--text)}
+        .section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-    /* flame-streak style */
-    .streak{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));border:1px solid var(--glass-border);font-weight:600}
-    .flame{width:18px;height:18px;border-radius:6px;background:linear-gradient(45deg,#ff6a00,#ffd24d);display:inline-block;transform-origin:center;animation:flameBounce 1s infinite ease-in-out}
+        /* === HERO === */
+        .hero {
+            text-align: center;
+            padding: 6rem 1rem;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Leonardo_self.jpg/640px-Leonardo_self.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            border-radius: 20px;
+            color: white;
+            margin-bottom: 3rem;
+            animation: fadeIn 1.2s ease-out;
+        }
 
-    @keyframes flameBounce{
-      0%{transform:translateY(0) scale(1)}
-      50%{transform:translateY(-6px) scale(1.08)}
-      100%{transform:translateY(0) scale(1)}
-    }
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: slideInDown 1s ease-out;
+        }
 
-    /* small UI animations */
-    @keyframes appearLeft{
-      to{opacity:1;transform:translateX(0)}
-    }
-    /* lazy-ish */
-    .fade{opacity:0;transform:translateY(18px);transition:all .6s ease}
-    .fade.show{opacity:1;transform:none}
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto;
+            animation: slideInUp 1s ease-out 0.3s both;
+        }
 
-    /* responsive */
-    @media (max-width:980px){
-      .hero{grid-template-columns:1fr;gap:14px;padding:28px}
-      .hero-right{height:340px}
-      .lede{max-width:100%}
-      .nav{left:12px;right:12px}
-    }
-    @media (max-width:560px){
-      .title{font-size:32px}
-      .nav a{display:none}
-    }
-  </style>
+        /* === STATS === */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-8px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #e74c3c;
+            display: block;
+        }
+
+        body.dark .stat-item {
+            background: #1e1e1e;
+        }
+
+        /* === QUOTE === */
+        .quote {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin: 3rem 0;
+            font-style: italic;
+            font-size: 1.3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote::before {
+            content: "❝";
+            font-size: 5rem;
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+
+        /* === CARDS === */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            color: #e74c3c;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 0.5rem;
+        }
+
+        .card h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: #2c3e50;
+        }
+
+        body.dark .card {
+            background: #1e1e1e;
+        }
+
+        /* === ARTWORK GRID === */
+        .artwork-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .artwork-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .artwork-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .artwork-image {
+            width: 100%;
+            height: 220px;
+            background: #d4a574;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .artwork-info {
+            padding: 1.5rem;
+        }
+
+        .artwork-info h4 {
+            color: #e74c3c;
+            margin-bottom: 0.5rem;
+        }
+
+        /* === TIMELINE === */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #e74c3c;
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 2rem 0;
+            width: 45%;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .timeline-item:nth-child(even) {
+            margin-left: 55%;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            background: #e74c3c;
+            border-radius: 50%;
+            right: -60px;
+        }
+
+        .timeline-item:nth-child(even)::before {
+            left: -60px;
+            right: auto;
+        }
+
+        .timeline-year {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark .timeline-item {
+            background: #1e1e1e;
+        }
+
+        /* === INVENTIONS === */
+        .inventions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .invention-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .invention-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .invention-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #e74c3c;
+        }
+
+        body.dark .invention-card {
+            background: #1e1e1e;
+        }
+
+        /* === FOOTER === */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: #2c3e50;
+            color: white;
+        }
+
+        body.dark footer {
+            background: #000;
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes slideInDown {
+            from {opacity: 0; transform: translateY(-30px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        @keyframes slideInUp {
+            from {opacity: 0; transform: translateY(30px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        @keyframes fadeInUp {
+            from {opacity: 0; transform: translateY(30px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 900px) {
+            .nav-menu {
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(44, 62, 80, 0.95);
+                padding: 1rem;
+                display: none;
+            }
+
+            .nav-menu.open {
+                display: flex;
+            }
+
+            .timeline::before {
+                left: 30px;
+            }
+
+            .timeline-item {
+                width: calc(100% - 80px);
+                margin-left: 80px !important;
+            }
+
+            .timeline-item::before {
+                left: -60px !important;
+                right: auto !important;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="wrap">
-
-    <!-- NAV -->
-    <nav class="nav" role="navigation" aria-label="main nav">
-      <div class="brand">Leonardo<span style="color:var(--neon)">•</span></div>
-      <div class="links" role="menubar" aria-hidden="false">
-        <a href="#bio">Bio</a>
-        <a href="#inventions">Inventions</a>
-        <a href="#art">Art</a>
-        <a href="#legacy">Legacy</a>
-        <button class="btn neon" id="openSettings" aria-haspopup="dialog" title="Settings">
-          <span class="dot" aria-hidden="true"></span>
-          Settings
-        </button>
-      </div>
-    </nav>
-
-    <!-- HERO -->
-    <header class="hero" id="hero" style="position:relative;overflow:visible">
-      <!-- decorative parallax svg (subtle) -->
-      <svg class="layer" width="600" height="400" style="right:-120px;top:-80px;position:absolute;transform:translateZ(0);opacity:0.06" aria-hidden="true">
-        <defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#00e6ff"/><stop offset="1" stop-color="#ffb86b"/></linearGradient></defs>
-        <circle cx="320" cy="120" r="120" fill="url(#g1)"></circle>
-      </svg>
-
-      <div class="hero-left">
-        <h1 class="title">Leonardo<br><small style="font-weight:400">da Vinci</small></h1>
-        <div class="subtitle">1452 — 1519 · Renaissance polymath</div>
-        <p class="lede">Painter, engineer, anatomist and inventor—an obsessive observer who sketched machines, dissections and dreams. His notebooks still teach curiosity.</p>
-
-        <div style="margin-top:18px">
-          <span class="badge">Florence</span>
-          <span class="badge">Apprentice: Verrocchio</span>
-          <span class="badge">Milan • France</span>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#" class="logo">Leonardo da Vinci</a>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-section="home">Startseite</li>
+                <li class="nav-item" data-section="biography">Biografie</li>
+                <li class="nav-item" data-section="art">Kunst</li>
+                <li class="nav-item" data-section="inventions">Erfindungen</li>
+                <li class="nav-item" data-section="timeline">Zeitlinie</li>
+            </ul>
+            <button class="dark-toggle">🌙</button>
         </div>
-
-        <div style="margin-top:20px;display:flex;gap:12px;align-items:center">
-          <a class="btn" href="#inventions">Explore Inventions</a>
-          <div class="streak" title="daily streak">
-            <div class="flame" aria-hidden="true"></div>
-            <div style="font-size:.95rem;color:var(--muted)">🔥 3</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-right" aria-hidden="false">
-        <img class="portrait" src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Leonardo_da_Vinci_-_presumed_self-portrait_-_WGA12798.jpg" alt="Leonardo portrait">
-      </div>
     </header>
 
-    <!-- BIO -->
-    <section id="bio" class="content" aria-labelledby="biotitle">
-      <h2 id="biotitle" class="section-title">Biography</h2>
+    <!-- MAIN -->
+    <main class="main-content">
+        <div class="container">
+            <!-- HOME -->
+            <section class="section active" id="home">
+                <div class="hero">
+                    <h1>Leonardo da Vinci</h1>
+                    <p>Das Universalgenie der Renaissance – Künstler, Erfinder, Wissenschaftler und Visionär</p>
+                </div>
 
-      <div class="timeline" id="timeline">
-        <div class="time-row card fade">
-          <div class="year">1452</div>
-          <div class="desc"><strong>Birth in Vinci</strong><div style="margin-top:6px;color:var(--muted)">Born on April 15 in Vinci — illegitimate son of a notary and local woman.</div></div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number">67</span>
+                        <div class="stat-label">Lebensjahre</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">15+</span>
+                        <div class="stat-label">Berühmte Gemälde</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">13000+</span>
+                        <div class="stat-label">Skizzen & Notizen</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">∞</span>
+                        <div class="stat-label">Genius</div>
+                    </div>
+                </div>
+
+                <div class="quote">
+                    "Wer wenig denkt, der irrt viel." – Leonardo da Vinci
+                </div>
+
+                <div class="card">
+                    <h2>Das Universalgenie</h2>
+                    <p>Leonardo da Vinci (1452–1519) war ein italienisches Universalgenie, das in Kunst, Wissenschaft, Technik und Philosophie unübertroffen war. Er gilt als Inbegriff des Renaissance-Menschen.</p>
+                </div>
+            </section>
+
+            <!-- BIOGRAPHY -->
+            <section class="section" id="biography">
+                <div class="card">
+                    <h2>Biografie</h2>
+                    <h3>Frühes Leben</h3>
+                    <p>Geboren 1452 in Vinci. Schon früh zeigte er außergewöhnliches Talent in Kunst und Wissenschaft.</p>
+                    <h3>Lehrjahre</h3>
+                    <p>Mit 14 Jahren in Verrocchios Werkstatt. Dort lernte er Malerei, Skulptur und Technik.</p>
+                    <h3>Mailand</h3>
+                    <p>Arbeitete für den Herzog Ludovico Sforza. Entwarf Maschinen und malte Meisterwerke.</p>
+                </div>
+            </section>
+
+            <!-- ART -->
+            <section class="section" id="art">
+                <div class="card">
+                    <h2>Kunst</h2>
+                    <p>Von Mona Lisa bis zum Abendmahl – seine Werke revolutionierten die Malerei. Er nutzte das Sfumato für weiche Übergänge und realistische Wirkung. Mit Licht, Schatten und präzisen Details machte er seine Figuren lebendig und verband dabei Kunst mit Wissenschaft.</p>
+                </div>
+                <div class="artwork-grid">
+                    <div class="artwork-card">
+                        <div class="artwork-image">Mona Lisa</div>
+                        <div class="artwork-info">
+                            <h4>Mona Lisa</h4>
+                            <p>Hallo Welt</p>
+                        <div class="artwork-image">Das letzte Abendmahl</div>
+                        <div class="artwork-info">
+                            <h4>Das letzte Abendmahl</h4>
+                            <p>Revolutionäres Wandgemälde in Mailand.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INVENTIONS -->
+            <section class="section" id="inventions">
+                <div class="card">
+                    <h2>Erfindungen</h2>
+                    <p>Leonardo entwarf Flugmaschinen, Panzer, Brücken und sogar Roboter.</p>
+                </div>
+                <div class="inventions-grid">
+                    <div class="invention-card">
+                        <div class="invention-icon">✈️</div>
+                        <h4>Flugmaschinen</h4>
+                        <p>Visionen des Fliegens Jahrhunderte vor dem Flugzeug.</p>
+                    </div>
+                    <div class="invention-card">
+                        <div class="invention-icon">🚁</div>
+                        <h4>Luftschraube</h4>
+                        <p>Ein Vorläufer des Hubschraubers.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TIMELINE -->
+            <section class="section" id="timeline">
+                <div class="card"><h2>Zeitlinie</h2></div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">1452</div>
+                        <h4>Geburt</h4>
+                        <p>Leonardo wird in Vinci geboren.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">1495</div>
+                        <h4>Das letzte Abendmahl</h4>
+                        <p>Beginnt Arbeit am berühmten Wandgemälde.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">1519</div>
+                        <h4>Tod</h4>
+                        <p>Leonardo stirbt in Amboise, Frankreich.</p>
+                    </div>
+                </div>
+            </section>
         </div>
+    </main>
 
-        <div class="time-row card fade">
-          <div class="year">1466</div>
-          <div class="desc"><strong>Apprenticeship</strong><div style="margin-top:6px;color:var(--muted)">Joined Andrea del Verrocchio's workshop — learned painting, metalwork, mechanics.</div></div>
-        </div>
+    <!-- FOOTER -->
+    <footer>
+        © 2025 Leonardo da Vinci Showcase | FT-Studios    </footer>
 
-        <div class="time-row card fade">
-          <div class="year">1482</div>
-          <div class="desc"><strong>Milan Court</strong><div style="margin-top:6px;color:var(--muted)">Worked for Ludovico Sforza — designer, engineer, theatrical innovator.</div></div>
-        </div>
+    <!-- JS -->
+    <script>
+        // === SECTION SWITCH ===
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.section');
 
-        <div class="time-row card fade">
-          <div class="year">1503</div>
-          <div class="desc"><strong>The Mona Lisa</strong><div style="margin-top:6px;color:var(--muted)">Started the portrait that would redefine psychological realism in painting.</div></div>
-        </div>
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelector('.nav-item.active').classList.remove('active');
+                item.classList.add('active');
+                sections.forEach(sec => sec.classList.remove('active'));
+                document.getElementById(item.dataset.section).classList.add('active');
+            });
+        });
 
-        <div class="time-row card fade">
-          <div class="year">1519</div>
-          <div class="desc"><strong>Final Chapter</strong><div style="margin-top:6px;color:var(--muted)">Died May 2 in Amboise, under King Francis I's patronage.</div></div>
-        </div>
-      </div>
-    </section>
+        // === DARK MODE ===
+        const darkToggle = document.querySelector('.dark-toggle');
+        darkToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            darkToggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+        });
 
-    <!-- INVENTIONS -->
-    <section id="inventions" class="content" aria-labelledby="invtitle" style="margin-top:22px">
-      <h2 id="invtitle" class="section-title">Inventions</h2>
-      <div class="grid">
-        <article class="card fade">
-          <h3>Aerial Screw</h3>
-          <p>Sketch of a helical rotor — one of the earliest ideas resembling vertical lift concepts.</p>
-        </article>
-
-        <article class="card fade">
-          <h3>Armored Vehicle</h3>
-          <p>Concept for a mobile, crank-driven armored platform — early approach to battlefield engineering.</p>
-        </article>
-
-        <article class="card fade">
-          <h3>Parachute</h3>
-          <p>Pyramid-shaped linen parachute design — modern tests confirm surprising viability.</p>
-        </article>
-
-        <article class="card fade">
-          <h3>Robotic Knight</h3>
-          <p>Automaton blueprint capable of simple lifelike movement — early robotics imagination.</p>
-        </article>
-
-        <article class="card fade">
-          <h3>Hydraulics</h3>
-          <p>Proposals for canals, locks and water management for cities and agriculture.</p>
-        </article>
-
-        <article class="card fade">
-          <h3>Bridge Concepts</h3>
-          <p>Innovative multi-level and self-supporting bridge ideas — urban planning foresight.</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- ART -->
-    <section id="art" class="content" style="margin-top:22px">
-      <h2 class="section-title">Masterworks</h2>
-      <div class="grid">
-        <div class="card fade"><h3>Mona Lisa</h3><p>Masterful sfumato and psychological depth. Louvre masterpiece.</p></div>
-        <div class="card fade"><h3>The Last Supper</h3><p>Fresco using precise perspective; dramatic narrative composition.</p></div>
-        <div class="card fade"><h3>Vitruvian Man</h3><p>Study of human proportion merging art and geometry.</p></div>
-        <div class="card fade"><h3>Lady with an Ermine</h3><p>Portrait combining pose innovation and exquisite texture rendering.</p></div>
-      </div>
-    </section>
-
-    <!-- LEGACY -->
-    <section id="legacy" class="content" style="margin-top:22px">
-      <h2 class="section-title">Legacy</h2>
-      <div class="grid">
-        <div class="card fade"><h3>Scientific Method</h3><p>Observational rigor and experimentation laid groundwork for empirical science.</p></div>
-        <div class="card fade"><h3>Interdisciplinary</h3><p>Art + science synthesis — model for modern cross-disciplinary work.</p></div>
-        <div class="card fade"><h3>Anatomy</h3><p>Detailed dissections advanced medical illustration & understanding.</p></div>
-        <div class="card fade"><h3>Inspiration</h3><p>Still influences artists, engineers and inventors worldwide.</p></div>
-      </div>
-    </section>
-
-  </div>
-
-  <!-- SETTINGS (slide down panel) -->
-  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="panel" role="document" aria-labelledby="settingsTitle">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h4 id="settingsTitle">Settings</h4>
-        <button id="close" class="btn" aria-label="Close settings">Close</button>
-      </div>
-
-      <div style="margin-top:8px">
-        <div style="font-size:.95rem;margin-bottom:8px">Theme</div>
-        <div class="radio-row" role="radiogroup" aria-label="Theme">
-          <div class="option" data-theme="light" role="radio" aria-checked="false">Light</div>
-          <div class="option" data-theme="dark" role="radio" aria-checked="false">Dark</div>
-        </div>
-      </div>
-
-      <div style="margin-top:14px">
-        <div style="font-size:.95rem;margin-bottom:8px">Language</div>
-        <div class="lang-chips" role="list">
-          <div class="chip" data-lang="en" role="listitem">English</div>
-          <div class="chip" data-lang="de" role="listitem">Deutsch</div>
-          <div class="chip" data-lang="fr" role="listitem">Français</div>
-          <div class="chip" data-lang="es" role="listitem">Español</div>
-        </div>
-      </div>
-
-      <div style="margin-top:18px;color:var(--muted);font-size:.92rem">Tip: deine Einstellungen werden lokal gespeichert.</div>
-    </div>
-  </div>
-
-  <script>
-    // --- translations (minimal, enough for UI) ---
-    const translations = {
-      en: { settings: "Settings", theme: "Theme", language: "Language", explore: "Explore Inventions", streak: "🔥 3" },
-      de: { settings: "Einstellungen", theme: "Design", language: "Sprache", explore: "Erfindungen entdecken", streak: "🔥 3" },
-      fr: { settings: "Paramètres", theme: "Thème", language: "Langue", explore: "Inventions", streak: "🔥 3" },
-      es: { settings: "Configuración", theme: "Tema", language: "Idioma", explore: "Inventos", streak: "🔥 3" }
-    };
-
-    // --- UI hooks ---
-    const openSettings = document.getElementById('openSettings');
-    const overlay = document.getElementById('overlay');
-    const closeBtn = document.getElementById('close');
-    const options = document.querySelectorAll('.option');
-    const chips = document.querySelectorAll('.chip');
-    const neonBtn = document.querySelector('.neon');
-    const lede = document.querySelector('.lede');
-    const streakTxt = document.querySelector('.streak div[style]');
-
-    // initial lang & theme
-    let lang = (localStorage.getItem('language') || (navigator.language || 'en').split('-')[0]).toLowerCase();
-    if (!translations[lang]) lang = 'en';
-    let theme = localStorage.getItem('theme') || document.documentElement.getAttribute('data-theme') || 'light';
-
-    // apply translations for small UI bits
-    function applyLang(l){
-      const t = translations[l] || translations.en;
-      // nav label
-      document.querySelectorAll('.nav a').forEach(a=>{
-        const txt = a.getAttribute('href');
-        // keep anchors same; only small button text
-      });
-      // explore button
-      document.querySelectorAll('.btn').forEach(b=>{
-        if (b.href && b.getAttribute('href') === '#inventions') b.textContent = t.explore;
-      });
-      // streak text
-      const s = document.querySelectorAll('.streak div');
-      if (s && s[0]) s[0].textContent = t.streak;
-      // settings button
-      if (openSettings) openSettings.innerHTML = '<span class="dot" aria-hidden="true"></span> ' + t.settings;
-    }
-
-    // apply theme visuals & aria
-    function applyTheme(th){
-      document.documentElement.setAttribute('data-theme', th);
-      localStorage.setItem('theme', th);
-      options.forEach(o=>{
-        const is = o.dataset.theme === th;
-        o.classList.toggle('active', is);
-        o.setAttribute('aria-checked', is ? 'true' : 'false');
-      });
-    }
-
-    // apply language chip active
-    function applyChip(l){
-      chips.forEach(c=>{
-        const is = c.dataset.lang === l;
-        c.classList.toggle('active', is);
-      });
-      localStorage.setItem('language', l);
-      lang = l;
-      applyLang(l);
-    }
-
-    // open/close overlay with keyboard support
-    openSettings.addEventListener('click', ()=> {
-      overlay.classList.add('active');
-      overlay.setAttribute('aria-hidden','false');
-    });
-    closeBtn.addEventListener('click', closeOverlay);
-    overlay.addEventListener('click', (e)=> {
-      if (e.target === overlay) closeOverlay();
-    });
-    document.addEventListener('keydown', (e)=> {
-      if (e.key === 'Escape') closeOverlay();
-    });
-    function closeOverlay(){
-      overlay.classList.remove('active');
-      overlay.setAttribute('aria-hidden','true');
-    }
-
-    // theme click
-    options.forEach(opt=>{
-      opt.addEventListener('click', ()=>{
-        const t = opt.dataset.theme;
-        applyTheme(t);
-      });
-    });
-
-    // language click
-    chips.forEach(chip=>{
-      chip.addEventListener('click', ()=>{
-        const l = chip.dataset.lang;
-        applyChip(l);
-      });
-    });
-
-    // initial apply
-    applyTheme(theme);
-    applyChip(lang);
-
-    // IntersectionObserver for reveal
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{
-        if (e.isIntersecting){
-          e.target.classList.add('show','visible');
-          e.target.classList.remove('fade');
-        }
-      });
-    }, {threshold:0.18});
-
-    document.querySelectorAll('.fade').forEach(n => io.observe(n));
-    document.querySelectorAll('.card').forEach(n => io.observe(n));
-
-    // small parallax effect for decorative svg circle on mouse move (subtle)
-    const hero = document.querySelector('.hero');
-    const layer = document.querySelector('.layer');
-    if (hero && layer){
-      hero.addEventListener('mousemove', (ev)=>{
-        const rect = hero.getBoundingClientRect();
-        const x = (ev.clientX - rect.left) / rect.width - 0.5;
-        const y = (ev.clientY - rect.top) / rect.height - 0.5;
-        layer.style.transform = `translate(${x * 12}px, ${y * 8}px) rotate(${x * 6}deg)`;
-      });
-    }
-
-    // save last-section feature (small)
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click', (e)=>{
-        const id = a.getAttribute('href').slice(1);
-        try { localStorage.setItem('lastSection', id); } catch(e){}
-      });
-    });
-
-    // restore last section on load
-    window.addEventListener('load', ()=>{
-      try {
-        const last = localStorage.getItem('lastSection');
-        if (last){
-          const el = document.getElementById(last);
-          if (el) el.scrollIntoView({behavior:'auto',block:'start'});
-        }
-      } catch(e){}
-    });
-
-    // accessibility: trap focus when overlay open (basic)
-    document.addEventListener('focusin', (e)=>{
-      if (overlay.classList.contains('active') && !overlay.contains(e.target)) {
-        // move focus into panel
-        const focusable = overlay.querySelector('button, [tabindex], .option, .chip');
-        if (focusable) focusable.focus();
-      }
-    });
-
-  </script>
+        // === COUNTER ANIMATION ===
+        const counters = document.querySelectorAll('.stat-number');
+        counters.forEach(counter => {
+            let updateCount = () => {
+                let target = +counter.textContent.replace(/\D/g, '');
+                let count = +counter.innerText.replace(/\D/g, '');
+                let increment = target / 200;
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(updateCount, 10);
+                }
+            };
+            updateCount();
+        });
+    </script>
 </body>
 </html>
