@@ -1,619 +1,645 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leonardo da Vinci - Das Universalgenie</title>
-    <style>
-        /* === RESET === */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Leonardo da Vinci — Art, Methods & Timeline</title>
+<meta name="description" content="A futuristic, multilingual, animated website about Leonardo da Vinci’s art—what he did, how he did it, and when he did it." />
+<link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+<style>
+  /* ============ Root + Themes ============ */
+  :root{
+    --bg: #f7fafc;
+    --bg-2:#ffffff;
+    --fg:#0f172a;
+    --muted:#475569;
+    --brand-1:#6366f1;
+    --brand-2:#a855f7;
+    --brand-3:#22c55e;
+    --card: rgba(255,255,255,.75);
+    --ring: rgba(2,6,23,.1);
+    --shadow: 0 10px 30px rgba(2,6,23,.08);
+    --radius: 18px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b1324;
+      --bg-2:#0f172a;
+      --fg:#e5e7eb;
+      --muted:#9aa3b2;
+      --card: rgba(15,23,42,.6);
+      --ring: rgba(255,255,255,.12);
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f7fafc; --bg-2:#ffffff; --fg:#0f172a; --muted:#475569; --card: rgba(255,255,255,.75); --ring: rgba(2,6,23,.1);
+    color-scheme: light;
+  }
+  :root[data-theme="dark"]{
+    --bg:#0b1324; --bg-2:#0f172a; --fg:#e5e7eb; --muted:#9aa3b2; --card: rgba(15,23,42,.6); --ring: rgba(255,255,255,.12);
+    color-scheme: dark;
+  }
 
-        html {
-            scroll-behavior: smooth;
-        }
+  /* ============ Base ============ */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    background: linear-gradient(180deg,var(--bg) 0%, var(--bg-2) 100%);
+    color: var(--fg);
+    line-height:1.6;
+  }
+  a{color:inherit}
+  img{max-width:100%; display:block}
 
-        body {
-            font-family: 'Georgia', serif;
-            line-height: 1.6;
-            color: #2c3e50;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            transition: background 0.6s, color 0.6s;
-        }
+  /* Fancy aurora background */
+  .aurora{
+    position:fixed; inset: -10vmax -10vmax auto -10vmax; height:80vmax; z-index:-1; filter: blur(60px); opacity:.35;
+    background:
+      radial-gradient(35vmax 35vmax at 25% 50%, rgba(99,102,241,.65), transparent 60%),
+      radial-gradient(35vmax 35vmax at 70% 40%, rgba(168,85,247,.55), transparent 60%),
+      radial-gradient(40vmax 40vmax at 50% 80%, rgba(34,197,94,.45), transparent 60%);
+    pointer-events:none;
+  }
 
-        body.dark {
-            background: #121212;
-            color: #f0f0f0;
-        }
+  /* ============ Layout helpers ============ */
+  .container{max-width:1200px; margin:0 auto; padding:0 20px}
+  .section{padding:80px 0}
+  .grid{display:grid; gap:24px}
+  .grid-2{grid-template-columns:1fr}
+  .grid-3{grid-template-columns:1fr}
+  @media(min-width:900px){ .grid-2{grid-template-columns:1.2fr .8fr} .grid-3{grid-template-columns:repeat(3,1fr)} }
 
-        /* === HEADER === */
-        .header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(44, 62, 80, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 1rem 0;
-            transition: all 0.3s ease;
-        }
+  /* ============ Header / Nav ============ */
+  header{
+    position:sticky; top:0; backdrop-filter: blur(10px);
+    background: color-mix(in hsl, var(--bg-2) 60%, transparent);
+    border-bottom:1px solid var(--ring);
+    z-index:30;
+  }
+  .nav{display:flex; align-items:center; gap:10px; height:64px}
+  .brand{
+    display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.2px;
+  }
+  .sparkle{width:20px; height:20px; background:
+    conic-gradient(from 0deg, var(--brand-1), var(--brand-2), var(--brand-3), var(--brand-1));
+    border-radius:8px; box-shadow: var(--shadow);
+    animation: spin 6s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(1turn)}}
+  .navlinks{margin-left:auto; display:none; gap:8px}
+  .navlinks a{padding:8px 12px; border-radius:999px; text-decoration:none; border:1px solid transparent}
+  .navlinks a:hover{background: color-mix(in hsl, var(--bg-2) 85%, transparent); border-color: var(--ring)}
+  @media(min-width:900px){.navlinks{display:flex}}
+  .controls{display:flex; gap:8px; margin-left:auto}
+  .btn{
+    appearance:none; border:1px solid var(--ring); background: color-mix(in hsl, var(--bg-2) 85%, transparent);
+    color:var(--fg); padding:8px 12px; border-radius:12px; cursor:pointer; transition:.2s transform, .2s background;
+  }
+  .btn:active{transform: translateY(1px)}
+  .select{padding:8px 10px; border-radius:12px; border:1px solid var(--ring); background: var(--bg-2); color:var(--fg)}
 
-        body.dark .header {
-            background: rgba(20, 20, 20, 0.95);
-        }
+  /* ============ Hero ============ */
+  .hero{padding:96px 0 48px}
+  .title{font-weight:900; line-height:1.1; font-size: clamp(32px, 5vw, 56px);}
+  .lead{opacity:.85; font-size: clamp(16px, 2.5vw, 20px); margin-top:12px}
+  .hero-card{
+    position:relative; border-radius:28px; overflow:hidden; box-shadow: var(--shadow); border:1px solid var(--ring);
+  }
+  .glow{
+    position:absolute; inset:-16px; border-radius:34px;
+    background: conic-gradient(from 0deg, rgba(99,102,241,.25), rgba(168,85,247,.18), rgba(34,197,94,.22), rgba(99,102,241,.25));
+    filter: blur(18px); z-index:-1; animation: slowspin 16s linear infinite;
+  }
+  @keyframes slowspin{to{transform:rotate(1turn)}}
+  .badges{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap}
+  .badge{padding:6px 10px; border-radius:999px; border:1px solid var(--ring); font-size:12px; opacity:.9}
 
-        .nav-container {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-        }
+  /* ============ Cards & Sections ============ */
+  .card{
+    background: var(--card); border:1px solid var(--ring); border-radius: var(--radius); box-shadow: var(--shadow);
+  }
+  .card .body{padding:20px}
+  .section-title{display:flex; align-items:center; gap:12px; font-weight:800; font-size:28px}
+  .pill{padding:8px 12px; border-radius:12px; background: color-mix(in hsl, var(--bg-2) 85%, transparent); border:1px solid var(--ring)}
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #e74c3c;
-            text-decoration: none;
-        }
+  /* ============ Timeline ============ */
+  .timeline{
+    position:relative;
+  }
+  .timeline::before{
+    content:""; position:absolute; left:0; right:0; height:4px; top:10px;
+    background: linear-gradient(90deg, rgba(99,102,241,.6), rgba(168,85,247,.6), rgba(34,197,94,.6));
+    border-radius:999px;
+  }
+  .t-grid{margin-top:40px; display:grid; gap:18px}
+  @media(min-width:900px){.t-grid{grid-template-columns:repeat(3,1fr)}}
+  .t-item{padding:14px 16px}
+  .year{display:inline-block; font-weight:800; padding:6px 10px; border-radius:999px; background: color-mix(in hsl, var(--bg-2) 85%, transparent); border:1px solid var(--ring); margin-right:8px}
 
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
+  /* ============ Tabs (Works) ============ */
+  .tabs{display:flex; flex-wrap:wrap; gap:8px; padding:8px; background: color-mix(in hsl, var(--bg-2) 85%, transparent); border:1px solid var(--ring); border-radius:16px}
+  .tab-btn{padding:8px 12px; border-radius:10px; border:1px solid var(--ring); background: transparent; cursor:pointer}
+  .tab-btn[aria-selected="true"]{background: var(--bg-2); box-shadow: var(--shadow)}
 
-        .nav-item {
-            cursor: pointer;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-        }
+  /* ============ Gallery ============ */
+  .gallery{display:grid; grid-template-columns: repeat(2,1fr); gap:10px}
+  @media(min-width:700px){.gallery{grid-template-columns: repeat(3,1fr)}}
+  @media(min-width:1100px){.gallery{grid-template-columns: repeat(6,1fr)}}
+  .g-item{position:relative; border-radius:16px; overflow:hidden; border:1px solid var(--ring)}
+  .g-item img{aspect-ratio:1/1; object-fit:cover; transition: transform .35s ease}
+  .g-item:hover img{transform:scale(1.06)}
+  .g-mask{position:absolute; inset:0; background: linear-gradient(to top, rgba(0,0,0,.35), transparent); opacity:0; transition:.25s}
+  .g-item:hover .g-mask{opacity:1}
 
-        .nav-item:hover, .nav-item.active {
-            background: #e74c3c;
-            transform: translateY(-2px);
-        }
+  /* ============ Lightbox ============ */
+  .lightbox{position:fixed; inset:0; background:rgba(0,0,0,.75); display:none; align-items:center; justify-content:center; padding:24px; z-index:50}
+  .lightbox.open{display:flex}
+  .lightbox img{max-width:92vw; max-height:85vh; border-radius:16px; border:1px solid var(--ring); box-shadow: var(--shadow)}
+  .close{position:absolute; top:18px; right:18px; padding:8px 10px; border-radius:10px; background: var(--bg-2); border:1px solid var(--ring); cursor:pointer}
 
-        /* === DARKMODE BUTTON === */
-        .dark-toggle {
-            cursor: pointer;
-            font-size: 1.3rem;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.3s;
-        }
+  /* ============ Footer ============ */
+  footer{border-top:1px solid var(--ring)}
 
-        .dark-toggle:hover {
-            background: #c0392b;
-        }
-
-        /* === MAIN === */
-        .main-content {
-            margin-top: 80px;
-            padding: 2rem 0;
-        }
-
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .section {
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s ease;
-            margin-bottom: 3rem;
-        }
-
-        .section.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* === HERO === */
-        .hero {
-            text-align: center;
-            padding: 6rem 1rem;
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Leonardo_self.jpg/640px-Leonardo_self.jpg');
-            background-size: cover;
-            background-attachment: fixed;
-            border-radius: 20px;
-            color: white;
-            margin-bottom: 3rem;
-            animation: fadeIn 1.2s ease-out;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            animation: slideInDown 1s ease-out;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            max-width: 700px;
-            margin: 0 auto;
-            animation: slideInUp 1s ease-out 0.3s both;
-        }
-
-        /* === STATS === */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .stat-item {
-            text-align: center;
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-
-        .stat-item:hover {
-            transform: translateY(-8px);
-        }
-
-        .stat-number {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #e74c3c;
-            display: block;
-        }
-
-        body.dark .stat-item {
-            background: #1e1e1e;
-        }
-
-        /* === QUOTE === */
-        .quote {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            margin: 3rem 0;
-            font-style: italic;
-            font-size: 1.3rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quote::before {
-            content: "❝";
-            font-size: 5rem;
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            opacity: 0.3;
-        }
-
-        /* === CARDS === */
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-
-        .card h2 {
-            color: #e74c3c;
-            margin-bottom: 1rem;
-            font-size: 2rem;
-            border-bottom: 3px solid #e74c3c;
-            padding-bottom: 0.5rem;
-        }
-
-        .card h3 {
-            margin-top: 1.5rem;
-            margin-bottom: 0.8rem;
-            color: #2c3e50;
-        }
-
-        body.dark .card {
-            background: #1e1e1e;
-        }
-
-        /* === ARTWORK GRID === */
-        .artwork-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .artwork-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .artwork-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-
-        .artwork-image {
-            width: 100%;
-            height: 220px;
-            background: #d4a574;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: white;
-        }
-
-        .artwork-info {
-            padding: 1.5rem;
-        }
-
-        .artwork-info h4 {
-            color: #e74c3c;
-            margin-bottom: 0.5rem;
-        }
-
-        /* === TIMELINE === */
-        .timeline {
-            position: relative;
-            padding: 2rem 0;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: #e74c3c;
-            transform: translateX(-50%);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin: 2rem 0;
-            width: 45%;
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            animation: fadeInUp 0.8s ease;
-        }
-
-        .timeline-item:nth-child(even) {
-            margin-left: 55%;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            width: 20px;
-            height: 20px;
-            background: #e74c3c;
-            border-radius: 50%;
-            right: -60px;
-        }
-
-        .timeline-item:nth-child(even)::before {
-            left: -60px;
-            right: auto;
-        }
-
-        .timeline-year {
-            color: #e74c3c;
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        body.dark .timeline-item {
-            background: #1e1e1e;
-        }
-
-        /* === INVENTIONS === */
-        .inventions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .invention-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .invention-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .invention-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #e74c3c;
-        }
-
-        body.dark .invention-card {
-            background: #1e1e1e;
-        }
-
-        /* === FOOTER === */
-        footer {
-            text-align: center;
-            padding: 2rem;
-            background: #2c3e50;
-            color: white;
-        }
-
-        body.dark footer {
-            background: #000;
-        }
-
-        /* === ANIMATIONS === */
-        @keyframes slideInDown {
-            from {opacity: 0; transform: translateY(-30px);}
-            to {opacity: 1; transform: translateY(0);}
-        }
-
-        @keyframes slideInUp {
-            from {opacity: 0; transform: translateY(30px);}
-            to {opacity: 1; transform: translateY(0);}
-        }
-
-        @keyframes fadeIn {
-            from {opacity: 0;}
-            to {opacity: 1;}
-        }
-
-        @keyframes fadeInUp {
-            from {opacity: 0; transform: translateY(30px);}
-            to {opacity: 1; transform: translateY(0);}
-        }
-
-        /* === RESPONSIVE === */
-        @media (max-width: 900px) {
-            .nav-menu {
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: rgba(44, 62, 80, 0.95);
-                padding: 1rem;
-                display: none;
-            }
-
-            .nav-menu.open {
-                display: flex;
-            }
-
-            .timeline::before {
-                left: 30px;
-            }
-
-            .timeline-item {
-                width: calc(100% - 80px);
-                margin-left: 80px !important;
-            }
-
-            .timeline-item::before {
-                left: -60px !important;
-                right: auto !important;
-            }
-        }
-    </style>
+  /* ============ Animations (scroll reveal) ============ */
+  .reveal{opacity:0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease}
+  .reveal.visible{opacity:1; transform: translateY(0)}
+</style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header class="header">
-        <div class="nav-container">
-            <a href="#" class="logo">Leonardo da Vinci</a>
-            <ul class="nav-menu">
-                <li class="nav-item active" data-section="home">Startseite</li>
-                <li class="nav-item" data-section="biography">Biografie</li>
-                <li class="nav-item" data-section="art">Kunst</li>
-                <li class="nav-item" data-section="inventions">Erfindungen</li>
-                <li class="nav-item" data-section="timeline">Zeitlinie</li>
-            </ul>
-            <button class="dark-toggle">🌙</button>
+<div class="aurora" aria-hidden="true"></div>
+
+<header>
+  <div class="container nav">
+    <div class="brand"><span class="sparkle" aria-hidden="true"></span><span id="siteTitle">Leonardo da Vinci — Art, Methods & Timeline</span></div>
+
+    <nav class="navlinks">
+      <a href="#overview" data-i18n="nav.overview">Overview</a>
+      <a href="#methods" data-i18n="nav.methods">Methods</a>
+      <a href="#timeline" data-i18n="nav.timeline">Timeline</a>
+      <a href="#works" data-i18n="nav.works">Key Works</a>
+      <a href="#gallery" data-i18n="nav.gallery">Gallery</a>
+      <a href="#faq" data-i18n="nav.faq">FAQ</a>
+      <a href="#sources" data-i18n="nav.sources">Sources</a>
+    </nav>
+
+    <div class="controls">
+      <select id="langSelect" class="select" aria-label="Language">
+        <option value="en">English</option>
+        <option value="de">Deutsch</option>
+        <option value="fr">Français</option>
+      </select>
+      <button id="themeBtn" class="btn" aria-label="Toggle theme">🌗</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="section hero">
+    <div class="container grid grid-2">
+      <div>
+        <h1 class="title" id="siteTitleHero">Leonardo da Vinci — Art, Methods & Timeline</h1>
+        <p class="lead" data-i18n="hero.lead">
+          What did Leonardo do? How did he do it? When did he begin? Explore Leonardo's art through an immersive, multilingual experience.
+        </p>
+        <div style="display:flex; gap:10px; margin-top:16px">
+          <a class="btn" href="#overview" data-i18n="hero.cta">Start Exploring</a>
+          <a class="btn" href="#gallery" data-i18n="nav.gallery">Gallery</a>
         </div>
-    </header>
-
-    <!-- MAIN -->
-    <main class="main-content">
-        <div class="container">
-            <!-- HOME -->
-            <section class="section active" id="home">
-                <div class="hero">
-                    <h1>Leonardo da Vinci</h1>
-                    <p>Das Universalgenie der Renaissance – Künstler, Erfinder, Wissenschaftler und Visionär</p>
-                </div>
-
-                <div class="stats">
-                    <div class="stat-item">
-                        <span class="stat-number">67</span>
-                        <div class="stat-label">Lebensjahre</div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">15+</span>
-                        <div class="stat-label">Berühmte Gemälde</div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">13000+</span>
-                        <div class="stat-label">Skizzen & Notizen</div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">∞</span>
-                        <div class="stat-label">Genius</div>
-                    </div>
-                </div>
-
-                <div class="quote">
-                    "Wer wenig denkt, der irrt viel." – Leonardo da Vinci
-                </div>
-
-                <div class="card">
-                    <h2>Das Universalgenie</h2>
-                    <p>Leonardo da Vinci (1452–1519) war ein italienisches Universalgenie, das in Kunst, Wissenschaft, Technik und Philosophie unübertroffen war. Er gilt als Inbegriff des Renaissance-Menschen.</p>
-                </div>
-            </section>
-
-            <!-- BIOGRAPHY -->
-            <section class="section" id="biography">
-                <div class="card">
-                    <h2>Biografie</h2>
-                    <h3>Frühes Leben</h3>
-                    <p>Geboren 1452 in Vinci. Schon früh zeigte er außergewöhnliches Talent in Kunst und Wissenschaft.</p>
-                    <h3>Lehrjahre</h3>
-                    <p>Mit 14 Jahren in Verrocchios Werkstatt. Dort lernte er Malerei, Skulptur und Technik.</p>
-                    <h3>Mailand</h3>
-                    <p>Arbeitete für den Herzog Ludovico Sforza. Entwarf Maschinen und malte Meisterwerke.</p>
-                </div>
-            </section>
-
-            <!-- ART -->
-            <section class="section" id="art">
-                <div class="card">
-                    <h2>Kunst</h2>
-                    <p>Von Mona Lisa bis zum Abendmahl – seine Werke revolutionierten die Malerei. Er nutzte das Sfumato für weiche Übergänge und realistische Wirkung. Mit Licht, Schatten und präzisen Details machte er seine Figuren lebendig und verband dabei Kunst mit Wissenschaft.</p>
-                </div>
-                <div class="artwork-grid">
-                    <div class="artwork-card">
-                        <div class="artwork-image">Mona Lisa</div>
-                        <div class="artwork-info">
-                            <h4>Mona Lisa</h4>
-                            <p>Hallo Welt</p>
-                        <div class="artwork-image">Das letzte Abendmahl</div>
-                        <div class="artwork-info">
-                            <h4>Das letzte Abendmahl</h4>
-                            <p>Revolutionäres Wandgemälde in Mailand.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- INVENTIONS -->
-            <section class="section" id="inventions">
-                <div class="card">
-                    <h2>Erfindungen</h2>
-                    <p>Leonardo entwarf Flugmaschinen, Panzer, Brücken und sogar Roboter.</p>
-                </div>
-                <div class="inventions-grid">
-                    <div class="invention-card">
-                        <div class="invention-icon">✈️</div>
-                        <h4>Flugmaschinen</h4>
-                        <p>Visionen des Fliegens Jahrhunderte vor dem Flugzeug.</p>
-                    </div>
-                    <div class="invention-card">
-                        <div class="invention-icon">🚁</div>
-                        <h4>Luftschraube</h4>
-                        <p>Ein Vorläufer des Hubschraubers.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TIMELINE -->
-            <section class="section" id="timeline">
-                <div class="card"><h2>Zeitlinie</h2></div>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-year">1452</div>
-                        <h4>Geburt</h4>
-                        <p>Leonardo wird in Vinci geboren.</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-year">1495</div>
-                        <h4>Das letzte Abendmahl</h4>
-                        <p>Beginnt Arbeit am berühmten Wandgemälde.</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-year">1519</div>
-                        <h4>Tod</h4>
-                        <p>Leonardo stirbt in Amboise, Frankreich.</p>
-                    </div>
-                </div>
-            </section>
+        <div class="badges">
+          <span class="badge">EN • DE • FR</span>
+          <span class="badge" data-i18n="controls.light">Light</span><span> / </span><span class="badge" data-i18n="controls.dark">Dark</span>
         </div>
-    </main>
+      </div>
+      <div class="hero-card reveal">
+        <span class="glow" aria-hidden="true"></span>
+        <img alt="Mona Lisa" src="https://upload.wikimedia.org/wikipedia/commons/6/6a/Mona_Lisa.jpg">
+      </div>
+    </div>
+  </section>
 
-    <!-- FOOTER -->
-    <footer>
-        © 2025 Leonardo da Vinci Showcase | FT-Studios    </footer>
+  <!-- Overview -->
+  <section id="overview" class="section">
+    <div class="container grid grid-2">
+      <div class="reveal">
+        <div class="section-title">
+          <span class="pill">ℹ️</span>
+          <span data-i18n="overview.title">Who was Leonardo as an artist?</span>
+        </div>
+        <p data-i18n="overview.p1" style="margin-top:12px">
+          Leonardo da Vinci (1452–1519) was a painter, draftsman, and inventor whose artistic practice sought scientific truth in nature. His artworks fused close observation with experimental technique, shaping the High Renaissance.
+        </p>
+        <p data-i18n="overview.p2">
+          Apprenticed in Florence, he mastered drawing, perspective, anatomy, light, and atmosphere. He approached painting as a science, calling it “the grandchild of nature.”
+        </p>
+      </div>
+      <div class="grid reveal" style="gap:12px">
+        <div class="card"><div class="body"><div style="font-size:28px; font-weight:800">c. 1466–1519</div><div data-i18n="overview.stats.yearsActive" style="opacity:.75">Years active in art</div></div></div>
+        <div class="card"><div class="body"><div style="font-size:28px; font-weight:800">~15–20</div><div data-i18n="overview.stats.paintings" style="opacity:.75">Attributed paintings</div></div></div>
+        <div class="card"><div class="body"><div style="font-size:28px; font-weight:800">&gt;7,000</div><div data-i18n="overview.stats.notebooks" style="opacity:.75">Surviving notebook pages</div></div></div>
+        <div class="card"><div class="body"><div style="font-size:28px; font-weight:800">Sfumato, Chiaroscuro</div><div data-i18n="overview.stats.techniques" style="opacity:.75">Named techniques</div></div></div>
+      </div>
+    </div>
+  </section>
 
-    <!-- JS -->
-    <script>
-        // === SECTION SWITCH ===
-        const navItems = document.querySelectorAll('.nav-item');
-        const sections = document.querySelectorAll('.section');
+  <!-- Methods -->
+  <section id="methods" class="section">
+    <div class="container">
+      <div class="section-title reveal">
+        <span class="pill">📖</span><span data-i18n="methods.title">How did he do it?</span>
+      </div>
+      <div class="grid grid-3" style="margin-top:18px">
+        <article class="card reveal">
+          <img alt="Sfumato detail" src="https://upload.wikimedia.org/wikipedia/commons/6/6a/Mona_Lisa.jpg">
+          <div class="body">
+            <h3 data-i18n="methods.sfumato.title" style="margin:0">Sfumato</h3>
+            <p data-i18n="methods.sfumato.body">Ultra-fine layers of translucent paint soften contours and blend tones without hard edges, producing a smoky atmosphere and lifelike skin.</p>
+          </div>
+        </article>
+        <article class="card reveal">
+          <img alt="Last Supper" src="https://upload.wikimedia.org/wikipedia/commons/4/4b/%C3%9Altima_Cena_-_Da_Vinci_5.jpg">
+          <div class="body">
+            <h3 data-i18n="methods.chiaroscuro.title" style="margin:0">Chiaroscuro</h3>
+            <p data-i18n="methods.chiaroscuro.body">Bold orchestration of light and shadow models forms in three dimensions. Leonardo studied how light travels across curved surfaces and how reflected light softens darkness.</p>
+          </div>
+        </article>
+        <article class="card reveal">
+          <img alt="Underdrawing" src="https://upload.wikimedia.org/wikipedia/commons/2/22/Leonardo_da_Vinci_-_Ginevra_de%27_Benci_-_Google_Art_Project.jpg">
+          <div class="body">
+            <h3 data-i18n="methods.underdrawing.title" style="margin:0">Underdrawing & Revisions (Pentimenti)</h3>
+            <p data-i18n="methods.underdrawing.body">Infrared reflectography reveals exploratory sketches beneath paint layers. Leonardo iterated on pose, hands, and drapery, refining compositions as ideas evolved.</p>
+          </div>
+        </article>
+        <article class="card reveal">
+          <img alt="Vitruvian Man" src="https://upload.wikimedia.org/wikipedia/commons/3/38/Da_Vinci_Vitruve_Luc_Viatour.jpg">
+          <div class="body">
+            <h3 data-i18n="methods.anatomy.title" style="margin:0">Anatomy & Proportion</h3>
+            <p data-i18n="methods.anatomy.body">Dissections and measurements informed convincing motion and structure. The famous “Vitruvian Man” aligned human proportion with geometry.</p>
+          </div>
+        </article>
+        <article class="card reveal">
+          <img alt="Annunciation" src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Leonardo_da_Vinci_-_Annunciation.jpg">
+          <div class="body">
+            <h3 data-i18n="methods.materials.title" style="margin:0">Materials & Experiments</h3>
+            <p data-i18n="methods.materials.body">He tested grounds, binders, and varnishes; sometimes the experiments failed (as in “The Last Supper” wall technique), but they pushed technique forward.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
 
-        navItems.forEach(item => {
-            item.addEventListener('click', () => {
-                document.querySelector('.nav-item.active').classList.remove('active');
-                item.classList.add('active');
-                sections.forEach(sec => sec.classList.remove('active'));
-                document.getElementById(item.dataset.section).classList.add('active');
-            });
-        });
+  <!-- Timeline -->
+  <section id="timeline" class="section">
+    <div class="container">
+      <div class="section-title reveal"><span class="pill">🕒</span><span data-i18n="timeline.title">When did he start? Key moments</span></div>
+      <p class="reveal" data-i18n="timeline.notes" style="opacity:.75; margin-top:6px">Dates are approximate; Leonardo often worked across many years.</p>
+      <div class="timeline reveal">
+        <div class="t-grid">
+          <!-- JS will inject timeline cards -->
+          <div id="timelineGrid" class="grid" style="grid-template-columns: repeat(1,1fr); gap:18px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        // === DARK MODE ===
-        const darkToggle = document.querySelector('.dark-toggle');
-        darkToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark');
-            darkToggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
-        });
+  <!-- Works (Tabs) -->
+  <section id="works" class="section">
+    <div class="container">
+      <div class="section-title reveal"><span class="pill">🖌️</span><span data-i18n="works.title">Signature works</span></div>
+      <div class="tabs reveal" id="worksTabs"></div>
+      <div id="workContent" class="grid grid-2 reveal" style="margin-top:18px"></div>
+    </div>
+  </section>
 
-        // === COUNTER ANIMATION ===
-        const counters = document.querySelectorAll('.stat-number');
-        counters.forEach(counter => {
-            let updateCount = () => {
-                let target = +counter.textContent.replace(/\D/g, '');
-                let count = +counter.innerText.replace(/\D/g, '');
-                let increment = target / 200;
-                if (count < target) {
-                    counter.innerText = Math.ceil(count + increment);
-                    setTimeout(updateCount, 10);
-                }
-            };
-            updateCount();
-        });
-    </script>
+  <!-- Gallery -->
+  <section id="gallery" class="section">
+    <div class="container">
+      <div class="section-title reveal"><span class="pill">🖼️</span><span data-i18n="gallery.title">Studio & Paintings — Image Gallery</span></div>
+      <p class="reveal" data-i18n="gallery.hint" style="opacity:.75; margin-top:6px">Click any image for a closer look</p>
+      <div class="gallery reveal" id="galleryGrid"></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section">
+    <div class="container">
+      <div class="section-title reveal"><span class="pill">❓</span><span data-i18n="faq.title">Frequently asked questions</span></div>
+      <div class="grid grid-3" style="margin-top:18px">
+        <article class="card reveal"><div class="body"><h3 data-i18n="faq.q1">Why are some works unfinished?</h3><p data-i18n="faq.a1">Leonardo continually revised ideas and prioritized research; commissions and relocations also interrupted projects.</p></div></article>
+        <article class="card reveal"><div class="body"><h3 data-i18n="faq.q2">Did he paint fast?</h3><p data-i18n="faq.a2">No—he built up forms slowly through studies, underdrawing, and glazes, sometimes over years.</p></div></article>
+        <article class="card reveal"><div class="body"><h3 data-i18n="faq.q3">What makes his portraits feel alive?</h3><p data-i18n="faq.a3">Micro-modeling of light, subtle asymmetries, and sfumato around eyes and mouth generate lifelike expression.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sources -->
+  <section id="sources" class="section">
+    <div class="container">
+      <div class="section-title reveal"><span class="pill">📚</span><span data-i18n="sources.title">Sources (selected)</span></div>
+      <ul style="opacity:.9; margin-top:10px">
+        <li>Royal Collection Trust — Leonardo da Vinci: A Life in Drawing</li>
+        <li>Louvre Museum — Catalogue entries for Leonardo</li>
+        <li>Gallerie dell'Accademia — Vitruvian Man</li>
+        <li>Kemp, Zöllner, Bambach, Farago (scholarly overviews)</li>
+      </ul>
+      <p class="reveal" style="opacity:.65" data-i18n="sources.note">Scholarly consensus evolves; dates and attributions may change with new research.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container" style="padding:30px 0; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap">
+    <div>© <span id="year"></span> Leonardo Interactive</div>
+    <nav style="display:flex; gap:10px; flex-wrap:wrap">
+      <a class="pill" href="#overview" data-i18n="nav.overview">Overview</a>
+      <a class="pill" href="#timeline" data-i18n="nav.timeline">Timeline</a>
+      <a class="pill" href="#gallery" data-i18n="nav.gallery">Gallery</a>
+    </nav>
+  </div>
+</footer>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+  <button class="close" id="lightboxClose" aria-label="Close">✕</button>
+  <img id="lightboxImg" alt="">
+</div>
+
+<script>
+/* ===================== Data ===================== */
+const COPY = {
+  en: {
+    siteTitle: "Leonardo da Vinci — Art, Methods & Timeline",
+    hero: {
+      lead: "What did Leonardo do? How did he do it? When did he begin? Explore Leonardo's art through an immersive, multilingual experience.",
+      cta: "Start Exploring",
+    },
+    nav: { overview:"Overview", methods:"Methods", timeline:"Timeline", gallery:"Gallery", works:"Key Works", faq:"FAQ", sources:"Sources" },
+    controls: { light:"Light", dark:"Dark" },
+    overview: {
+      title:"Who was Leonardo as an artist?",
+      p1:"Leonardo da Vinci (1452–1519) was a painter, draftsman, and inventor whose artistic practice sought scientific truth in nature. His artworks fused close observation with experimental technique, shaping the High Renaissance.",
+      p2:"Apprenticed in Florence, he mastered drawing, perspective, anatomy, light, and atmosphere. He approached painting as a science, calling it “the grandchild of nature.”",
+      stats:{ yearsActive:"Years active in art", paintings:"Attributed paintings", notebooks:"Surviving notebook pages", techniques:"Named techniques" }
+    },
+    methods:{
+      title:"How did he do it?",
+      sfumato:{ title:"Sfumato", body:"Ultra-fine layers of translucent paint soften contours and blend tones without hard edges, producing a smoky atmosphere and lifelike skin." },
+      chiaroscuro:{ title:"Chiaroscuro", body:"Bold orchestration of light and shadow models forms in three dimensions. Leonardo studied how light travels across curved surfaces and how reflected light softens darkness." },
+      underdrawing:{ title:"Underdrawing & Revisions (Pentimenti)", body:"Infrared reflectography reveals exploratory sketches beneath paint layers. Leonardo iterated on pose, hands, and drapery, refining compositions as ideas evolved." },
+      anatomy:{ title:"Anatomy & Proportion", body:"Dissections and measurements informed convincing motion and structure. The famous “Vitruvian Man” aligned human proportion with geometry." },
+      materials:{ title:"Materials & Experiments", body:"He tested grounds, binders, and varnishes; sometimes the experiments failed (as in “The Last Supper” wall technique), but they pushed technique forward." },
+    },
+    timeline:{ title:"When did he start? Key moments", notes:"Dates are approximate; Leonardo often worked across many years." },
+    works:{ title:"Signature works" },
+    gallery:{ title:"Studio & Paintings — Image Gallery", hint:"Click any image for a closer look" },
+    faq:{ title:"Frequently asked questions", q1:"Why are some works unfinished?", a1:"Leonardo continually revised ideas and prioritized research; commissions and relocations also interrupted projects.", q2:"Did he paint fast?", a2:"No—he built up forms slowly through studies, underdrawing, and glazes, sometimes over years.", q3:"What makes his portraits feel alive?", a3:"Micro-modeling of light, subtle asymmetries, and sfumato around eyes and mouth generate lifelike expression." },
+    sources:{ title:"Sources (selected)", note:"Scholarly consensus evolves; dates and attributions may change with new research." }
+  },
+  de: {
+    siteTitle:"Leonardo da Vinci — Kunst, Methoden & Zeitleiste",
+    hero:{ lead:"Was tat Leonardo? Wie tat er es? Wann begann er? Erkunde Leonardos Kunst in einem immersiven, mehrsprachigen Erlebnis.", cta:"Jetzt entdecken" },
+    nav:{ overview:"Überblick", methods:"Methoden", timeline:"Zeitleiste", gallery:"Galerie", works:"Hauptwerke", faq:"FAQ", sources:"Quellen" },
+    controls:{ light:"Hell", dark:"Dunkel" },
+    overview:{
+      title:"Wer war Leonardo als Künstler?",
+      p1:"Leonardo da Vinci (1452–1519) war Maler, Zeichner und Erfinder, dessen künstlerische Praxis wissenschaftliche Wahrheit in der Natur suchte. Seine Werke verbanden genaue Beobachtung mit Experiment und prägten die Hochrenaissance.",
+      p2:"In Florenz ausgebildet, beherrschte er Zeichnung, Perspektive, Anatomie, Licht und Atmosphäre. Für ihn war Malerei eine Wissenschaft, „die Enkelin der Natur“.",
+      stats:{ yearsActive:"Aktive Jahre als Künstler", paintings:"Zugeschriebene Gemälde", notebooks:"Erhaltene Notizbuchseiten", techniques:"Benannte Techniken" }
+    },
+    methods:{
+      title:"Wie arbeitete er?",
+      sfumato:{ title:"Sfumato", body:"Extrem feine, transparente Schichten weichzeichnen Konturen ohne harte Kanten und erzeugen eine rauchige Atmosphäre sowie lebhafte Haut." },
+      chiaroscuro:{ title:"Chiaroscuro", body:"Licht und Schatten modellieren Formen plastisch. Leonardo untersuchte, wie Licht über gekrümmte Flächen wandert und Reflexlicht die Dunkelheit mildert." },
+      underdrawing:{ title:"Unterzeichnung & Änderungen (Pentimenti)", body:"Infrarot zeigt Erkundungszeichnungen unter Farbschichten. Leonardo verfeinerte Posen und Faltenwurf während des Malens." },
+      anatomy:{ title:"Anatomie & Proportion", body:"Sektionen und Messungen informierten glaubhafte Bewegung und Struktur; der „Vitruvianische Mensch“ verband Proportion und Geometrie." },
+      materials:{ title:"Material & Experimente", body:"Er testete Grundierungen, Binder und Firnisse; manche Experimente scheiterten (wie beim „Abendmahl“), trieben die Technik jedoch voran." },
+    },
+    timeline:{ title:"Wann begann er? Schlüsselmomente", notes:"Daten sind annähernd; Leonardo arbeitete oft über Jahre hinweg." },
+    works:{ title:"Signaturwerke" },
+    gallery:{ title:"Atelier & Gemälde — Galerie", hint:"Zum Vergrößern klicken" },
+    faq:{ title:"Häufige Fragen", q1:"Warum sind einige Werke unvollendet?", a1:"Leonardo überarbeitete ständig und priorisierte Forschung; Aufträge und Ortswechsel unterbrachen Projekte.", q2:"Malt er schnell?", a2:"Nein—er baute Formen langsam in Studien, Unterzeichnung und Lasuren auf.", q3:"Warum wirken seine Porträts lebendig?", a3:"Feinste Lichtmodellierung, subtile Asymmetrien und Sfumato um Augen und Mund." },
+    sources:{ title:"Quellen (Auswahl)", note:"Forschung entwickelt sich; Datierungen und Zuschreibungen können sich ändern." }
+  },
+  fr: {
+    siteTitle:"Léonard de Vinci — Art, Méthodes & Chronologie",
+    hero:{ lead:"Que fit Léonard ? Comment ? Quand commença-t-il ? Explorez son art dans une expérience multilingue immersive.", cta:"Explorer" },
+    nav:{ overview:"Aperçu", methods:"Méthodes", timeline:"Chronologie", gallery:"Galerie", works:"Œuvres clés", faq:"FAQ", sources:"Sources" },
+    controls:{ light:"Clair", dark:"Sombre" },
+    overview:{
+      title:"Quel artiste était Léonard ?",
+      p1:"Léonard de Vinci (1452–1519) fut peintre, dessinateur et inventeur. Sa pratique artistique cherchait la vérité scientifique de la nature, forgeant la Haute Renaissance.",
+      p2:"Formé à Florence, il maîtrisa dessin, perspective, anatomie, lumière et atmosphère. Pour lui, la peinture était une science.",
+      stats:{ yearsActive:"Années d'activité artistique", paintings:"Peintures attribuées", notebooks:"Pages de carnets conservées", techniques:"Techniques nommées" }
+    },
+    methods:{
+      title:"Comment travaillait-il ?",
+      sfumato:{ title:"Sfumato", body:"Couches très fines et transparentes adoucissent les contours; les tons se fondent sans arêtes nettes, créant une atmosphère vaporeuse." },
+      chiaroscuro:{ title:"Clair-obscur", body:"La mise en scène du contraste lumière/ombre modèle les formes. Léonard observait la lumière sur les surfaces courbes." },
+      underdrawing:{ title:"Sous-dessin & repentirs", body:"La réflectographie infrarouge révèle des esquisses exploratoires sous la peinture, témoignant d'itérations constantes." },
+      anatomy:{ title:"Anatomie & proportion", body:"Dissections et mesures assurent mouvement et structure convaincants; “L'Homme de Vitruve” unit corps et géométrie." },
+      materials:{ title:"Matériaux & expériences", body:"Il testa supports, liants et vernis; certaines expériences échouèrent (comme pour “La Cène”), mais firent avancer la technique." },
+    },
+    timeline:{ title:"Quand a-t-il commencé ? Moments clés", notes:"Dates approximatives; Léonard travaillait souvent sur plusieurs années." },
+    works:{ title:"Œuvres majeures" },
+    gallery:{ title:"Atelier & Peintures — Galerie", hint:"Cliquez pour agrandir" },
+    faq:{ title:"Questions fréquentes", q1:"Pourquoi certaines œuvres sont-elles inachevées ?", a1:"Il révisait sans cesse et privilégiait la recherche; commandes et déplacements interrompaient les projets.", q2:"Peignait-il rapidement ?", a2:"Non—il construisait lentement par études, sous-dessin et glacis.", q3:"Pourquoi ses portraits semblent-ils vivants ?", a3:"Modélisation lumineuse micro-dosée, asymétries subtiles et sfumato autour des yeux et de la bouche." },
+    sources:{ title:"Sources (sélection)", note:"Le consensus évolue; datations et attributions peuvent changer." }
+  }
+};
+
+const TIMELINE = [
+  { year:1466, label:"Apprenticeship with Verrocchio (Florence)" },
+  { year:1472, label:"Admitted to the painters' guild of Florence" },
+  { year:1482, label:"Moves to Milan; court artist to Ludovico Sforza" },
+  { year:1495, label:"Begins The Last Supper (Milan)" },
+  { year:1498, label:"Completes The Last Supper" },
+  { year:1500, label:"Returns to Florence" },
+  { year:1503, label:"Starts the Mona Lisa (Florence)" },
+  { year:1505, label:"Battle of Anghiari project (lost/unfinished)" },
+  { year:1513, label:"Rome (Medici) — scientific studies continue" },
+  { year:1516, label:"Moves to France, invited by Francis I" },
+  { year:1519, label:"Dies at Amboise (Clos Lucé)" },
+];
+
+const WORKS = [
+  {
+    title:"Mona Lisa",
+    date:"c.1503–1506 (later reworked)",
+    medium:"Oil on poplar",
+    location:"Louvre, Paris",
+    img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Mona_Lisa.jpg",
+    note:"Sfumato masterclass; micro-transitions around the mouth create the ambiguous smile."
+  },
+  {
+    title:"The Last Supper",
+    date:"1495–1498",
+    medium:"Tempera & oil on plaster (damaged)",
+    location:"Santa Maria delle Grazie, Milan",
+    img:"https://upload.wikimedia.org/wikipedia/commons/4/4b/%C3%9Altima_Cena_-_Da_Vinci_5.jpg",
+    note:"Experimental wall technique; psychological choreography of apostles at the moment of revelation."
+  },
+  {
+    title:"Vitruvian Man",
+    date:"c.1490",
+    medium:"Pen, ink, metalpoint",
+    location:"Gallerie dell'Accademia, Venice",
+    img:"https://upload.wikimedia.org/wikipedia/commons/3/38/Da_Vinci_Vitruve_Luc_Viatour.jpg",
+    note:"Canonical study of human proportion linking art, math, and architecture."
+  },
+  {
+    title:"Lady with an Ermine",
+    date:"c.1489–1491",
+    medium:"Oil on panel",
+    location:"Czartoryski Museum, Kraków",
+    img:"https://upload.wikimedia.org/wikipedia/commons/0/0c/Dama_z_%C5%82asiczk%C4%85.jpg",
+    note:"Subtle rotation and hand gesture animate the sitter; refined glazes."
+  },
+];
+
+const GALLERY = [
+  { src:"https://upload.wikimedia.org/wikipedia/commons/1/15/Leonardo_da_Vinci_-_Self-Portrait.jpg", alt:"Self-portrait (attributed)" },
+  { src:"https://upload.wikimedia.org/wikipedia/commons/2/22/Leonardo_da_Vinci_-_Ginevra_de%27_Benci_-_Google_Art_Project.jpg", alt:"Ginevra de' Benci" },
+  { src:"https://upload.wikimedia.org/wikipedia/commons/9/9a/Leonardo_da_Vinci_-_Annunciation.jpg", alt:"Annunciation" },
+  { src:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Mona_Lisa.jpg", alt:"Mona Lisa" },
+  { src:"https://upload.wikimedia.org/wikipedia/commons/4/4b/%C3%9Altima_Cena_-_Da_Vinci_5.jpg", alt:"The Last Supper" },
+  { src:"https://upload.wikimedia.org/wikipedia/commons/3/38/Da_Vinci_Vitruve_Luc_Viatour.jpg", alt:"Vitruvian Man" },
+];
+
+/* ===================== Helpers ===================== */
+const $ = (sel, ctx=document)=>ctx.querySelector(sel);
+const $$ = (sel, ctx=document)=>Array.from(ctx.querySelectorAll(sel));
+
+function setTheme(next){
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('ldv-theme', next);
+}
+
+function applyLang(lang){
+  const t = COPY[lang] || COPY.en;
+  // Titles
+  $('#siteTitle').textContent = t.siteTitle;
+  $('#siteTitleHero').textContent = t.siteTitle;
+  // All elements with data-i18n
+  $$('[data-i18n]').forEach(el=>{
+    const path = el.getAttribute('data-i18n').split('.');
+    let v = t;
+    for(const k of path){ v = v?.[k]; }
+    if(typeof v === 'string'){ el.textContent = v; }
+  });
+  localStorage.setItem('ldv-lang', lang);
+}
+
+/* ===================== Populate dynamic sections ===================== */
+function buildTimeline(){
+  const grid = $('#timelineGrid');
+  grid.innerHTML = '';
+  TIMELINE.forEach((ev,i)=>{
+    const c = document.createElement('div');
+    c.className = 'card t-item';
+    c.innerHTML = `<div class="body"><span class="year">${ev.year}</span>${ev.label}</div>`;
+    grid.appendChild(c);
+  });
+}
+
+function buildWorks(){
+  const tabs = $('#worksTabs');
+  const content = $('#workContent');
+  tabs.innerHTML = ''; content.innerHTML = '';
+
+  WORKS.forEach((w, idx)=>{
+    const b = document.createElement('button');
+    b.className = 'tab-btn';
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-selected', idx===0 ? 'true':'false');
+    b.textContent = w.title;
+    b.addEventListener('click', ()=>{
+      $$('.tab-btn', tabs).forEach(x=>x.setAttribute('aria-selected','false'));
+      b.setAttribute('aria-selected','true');
+      renderWork(w);
+    });
+    tabs.appendChild(b);
+  });
+  renderWork(WORKS[0]);
+
+  function renderWork(w){
+    content.innerHTML = `
+      <div class="card"><img alt="${w.title}" src="${w.img}"></div>
+      <div>
+        <div class="card"><div class="body">
+          <h3 style="margin:0; font-size:26px">${w.title}</h3>
+          <p><strong>Date:</strong> ${w.date}</p>
+          <p><strong>Medium:</strong> ${w.medium}</p>
+          <p><strong>Location:</strong> ${w.location}</p>
+          <hr style="border:none; border-top:1px solid var(--ring); margin:14px 0">
+          <p>${w.note}</p>
+        </div></div>
+      </div>`;
+    // Lightbox on image click
+    const img = $('img', content);
+    img.style.cursor='zoom-in';
+    img.addEventListener('click', ()=>openLightbox(w.img, w.title));
+  }
+}
+
+function buildGallery(){
+  const grid = $('#galleryGrid');
+  grid.innerHTML = '';
+  GALLERY.forEach((g)=>{
+    const b = document.createElement('button');
+    b.className = 'g-item';
+    b.innerHTML = `<img alt="${g.alt}" src="${g.src}"><span class="g-mask"></span>`;
+    b.addEventListener('click', ()=>openLightbox(g.src, g.alt));
+    grid.appendChild(b);
+  });
+}
+
+/* ===================== Lightbox ===================== */
+function openLightbox(src, alt){
+  const lb = $('#lightbox');
+  const img = $('#lightboxImg');
+  img.src = src; img.alt = alt || '';
+  lb.classList.add('open');
+}
+$('#lightbox, #lightboxClose').addEventListener('click', (e)=>{
+  if(e.target.id === 'lightbox' || e.target.id === 'lightboxClose'){ $('#lightbox').classList.remove('open'); }
+});
+
+/* ===================== Scroll Reveal ===================== */
+const io = new IntersectionObserver((entries)=>{
+  for(const ent of entries){
+    if(ent.isIntersecting){ ent.target.classList.add('visible'); io.unobserve(ent.target); }
+  }
+},{threshold:.12});
+$$('.reveal').forEach(el=>io.observe(el));
+
+/* ===================== Init ===================== */
+(function init(){
+  // Theme
+  const storedTheme = localStorage.getItem('ldv-theme');
+  if(storedTheme){ setTheme(storedTheme); }
+  $('#themeBtn').addEventListener('click', ()=>{
+    const cur = document.documentElement.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    setTheme(cur === 'dark' ? 'light' : 'dark');
+  });
+
+  // Language
+  const storedLang = localStorage.getItem('ldv-lang') || (navigator.language || 'en').slice(0,2);
+  const lang = ['en','de','fr'].includes(storedLang) ? storedLang : 'en';
+  $('#langSelect').value = lang;
+  applyLang(lang);
+  $('#langSelect').addEventListener('change', (e)=> applyLang(e.target.value));
+
+  // Dynamic content
+  buildTimeline();
+  buildWorks();
+  buildGallery();
+
+  // Minor content
+  $('#year').textContent = new Date().getFullYear();
+})();
+</script>
 </body>
 </html>
-
-adolf hitler meine fresse psuh das 
